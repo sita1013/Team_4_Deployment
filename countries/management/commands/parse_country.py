@@ -12,7 +12,7 @@ class Command(BaseCommand):
         filepath = kwargs['filepath']
         self.stdout.write(f"Reading file: {filepath}")
         #loads the data from the pm25_data file in country_data
-        df = pd.read_excel(filepath, sheet_name='Data', skiprows=3)
+        df = pd.read_excel(filepath, sheet_name='Data', skiprows=3, engine='openpyxl')
         df.dropna(axis=1, how='all', inplace=True)
         df.dropna(subset=["Country Name"], inplace=True)
         df_melted = df.melt(
