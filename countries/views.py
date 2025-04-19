@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from .models import PM25Record, Country
 
+def homepage(request):
+    return render(request, 'countries/homepage.html')
+
 def pm25_lookup_view(request):
     selected_country = request.GET.get('country')
     selected_year = request.GET.get('year')
