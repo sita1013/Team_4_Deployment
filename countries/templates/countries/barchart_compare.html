@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compare PM2.5 Levels</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Compare PM2.5 Levels Between Two Countries</h1>
+
+    <form method="get">
+        <label>Country 1:</label>
+        <select name="country1">
+            <option value="">--Choose--</option>
+            {% for country in countries %}
+                <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Country 2:</label>
+        <select name="country2">
+            <option value="">--Choose--</option>
+            {% for country in countries %}
+                <option value="{{ country.code }}" {% if country.code == country2_code %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Year:</label>
+        <select name="year">
+            <option value="">--Choose--</option>
+            {% for year in years %}
+                <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Compare</button>
+    </form>
+
+    {% if record1 and record2 %}
+        <canvas id="barChart" width="400" height="200"></canvas>
+        <script>
+            const ctx = document.getElementById('barChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
+                    datasets: [{
+                        label: 'PM2.5 in {{ selected_year }}',
+                        data: [{{ record1.value|default:"0" }}, {{ record2.value|default:"0" }}],
+                        backgroundColor: ['#4e79a7', '#f28e2b']
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    {% elif selected_year and country1_code and country2_code %}
+        <p><em>Data not available for one or both countries in {{ selected_year }}</em></p>
+    {% endif %}
+    <p><a href="{% url 'pm25_lookup' %}">← Return to Search</a></p>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PM2.5 Lookup</title>
+</head>
+<body>
+    <h1>PM2.5 Air Pollution Lookup</h1>
+    <form method="get">
+        <label for="country">Country:</label>
+        <select name="country" id="country">
+            <option value="">--Choose--</option>
+            {% for country in countries %}
+                <option value="{{ country.code }}" {% if country.code == selected_country %}selected{% endif %}>
+                    {{ country.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+            <option value="">--Choose--</option>
+            {% for y in years %}
+                <option value="{{ y }}" {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
+                    {{ y }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if record %}
+        <h3>PM2.5 Level for {{ record.country.name }} in {{ record.year }}:</h3>
+        <p><strong>{{ record.value|default:"No data" }}</strong></p>
+    {% elif selected_country and selected_year %}
+        <p><em>No data found for that selection.</em></p>
+    {% endif %}
+    <p><a href="{% url 'barchart_compare' %}">Compare two countries →</a></p>
+</body>
+</html>
