@@ -11,22 +11,18 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         filepath = kwargs['filepath']
         self.stdout.write(f"Reading file: {filepath}")
-        
         #loads the data from the pm25_data file in country_data
         df = pd.read_excel(filepath, sheet_name='Data', skiprows=3)
         df.dropna(axis=1, how='all', inplace=True)
         df.dropna(subset=["Country Name"], inplace=True)
-
         df_melted = df.melt(
             id_vars=["Country Name", "Country Code", "Indicator Name", "Indicator Code"],
             var_name="Year",
             value_name="PM25_Level"
         )
-
         df_melted["Year"] = pd.to_numeric(df_melted["Year"], errors="coerce")
         df_melted.dropna(subset=["Year"], inplace=True)
         df_melted["Year"] = df_melted["Year"].astype(int)
-
         #this is where I load it all into the database
         for _, row in df_melted.iterrows():
             country, _ = Country.objects.get_or_create(
@@ -38,5 +34,4 @@ class Command(BaseCommand):
                 year=row["Year"],
                 defaults={"value": row["PM25_Level"]}
             )
-
         self.stdout.write(self.style.SUCCESS("PM2.5 data loaded successfully."))
