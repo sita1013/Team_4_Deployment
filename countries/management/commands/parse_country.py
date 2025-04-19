@@ -12,7 +12,7 @@ class Command(BaseCommand):
         filepath = kwargs['filepath']
         self.stdout.write(f"Reading file: {filepath}")
         
-        # Load Excel
+        #loads the data from the pm25_data file in country_data
         df = pd.read_excel(filepath, sheet_name='Data', skiprows=3)
         df.dropna(axis=1, how='all', inplace=True)
         df.dropna(subset=["Country Name"], inplace=True)
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         df_melted.dropna(subset=["Year"], inplace=True)
         df_melted["Year"] = df_melted["Year"].astype(int)
 
-        # Load into DB
+        #this is where I load it all into the database
         for _, row in df_melted.iterrows():
             country, _ = Country.objects.get_or_create(
                 code=row["Country Code"],
