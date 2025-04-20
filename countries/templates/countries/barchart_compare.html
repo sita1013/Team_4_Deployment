@@ -36,27 +36,44 @@
     </form>
 
     {% if record1 and record2 %}
-        <canvas id="barChart" width="400" height="200"></canvas>
+        <canvas id="barChart" width="400" height="100"></canvas>
         <script>
             const ctx = document.getElementById('barChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
-                    datasets: [{
-                        label: 'PM2.5 in {{ selected_year }}',
-                        data: [{{ record1.value|default:"0" }}, {{ record2.value|default:"0" }}],
-                        backgroundColor: ['#4e79a7', '#f28e2b']
-                    }]
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
+                datasets: [
+                    {
+                        label: '{{ record1.country.name }}',
+                        data: [{{ record1.value|default:"0" }}, 0],
+                        backgroundColor: '#4e79a7'
+                    },
+                    {
+                        label: '{{ record2.country.name }}',
+                        data: [0, {{ record2.value|default:"0" }}],
+                        backgroundColor: '#f28e2b'
+                    }
+                ]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'PM2.5 in {{ selected_year }}'
+                    }
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'PM2.5 (%)'
                         }
                     }
                 }
-            });
+            }
+        });
         </script>
     {% elif selected_year and country1_code and country2_code %}
         <p><em>Data not available for one or both countries in {{ selected_year }}</em></p>
