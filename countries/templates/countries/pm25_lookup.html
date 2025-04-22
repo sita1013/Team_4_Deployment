@@ -3,173 +3,188 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>PM2.5 Air Pollution Lookup</title>
+  <title>PM2.5 Pollution Finder</title>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f7fb;
+      background: linear-gradient(135deg, #373B44 0%, #4286f4 100%);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    .lookup-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-      max-width: 720px;
-      width: 100%;
-      overflow: hidden;
-    }
-    .lookup-header {
-      background: #2a9dfa;
-      color: #fff;
-      padding: 1rem 1.5rem;
-      font-size: 1.25rem;
-      font-weight: bold;
-      text-align: center;
-    }
-    .lookup-body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      margin: 0;
       padding: 1.5rem;
     }
-    .lookup-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-end;
-    }
-    .form-group {
+    .pm-card {
+      background: rgba(24,28,38,0.96);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.28);
+      padding: 2.2rem 2rem 2rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      color: #fff;
       display: flex;
       flex-direction: column;
-      flex: 1;
-      min-width: 140px;
+      align-items: center;
+      animation: floatIn 0.8s cubic-bezier(.6,.3,.3,1.5);
     }
-    .form-group label {
+    @keyframes floatIn {
+      0% {transform:translateY(80px) scale(0.98);opacity:0;}
+      100% {transform:none;opacity:1;}
+    }
+    .pm-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 1.3rem;
+      letter-spacing: 0.02em;
+      text-align: center;
+      line-height: 1.3;
+      background: linear-gradient(90deg,#6dd5ed,#2193b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pm-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      margin-bottom: 1.4rem;
+    }
+    .pm-field label {
+      font-size: 1rem;
       margin-bottom: 0.25rem;
       font-weight: 600;
+      color: #6dd5ed;
+      letter-spacing: 0.01em;
     }
-    .form-group select {
-      padding: 0.5rem;
-      border: 1px solid #ccd1d9;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    .form-group select:focus {
-      outline: none;
-      border-color: #2a9dfa;
-    }
-    .lookup-form button {
-      background: #2a9dfa;
-      color: #fff;
+    .pm-field select {
+      width: 100%;
+      padding: 0.6rem 0.7rem;
+      border-radius: 0.7rem;
       border: none;
-      border-radius: 6px;
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      background: #232942;
+      color: #fff;
+      font-size: 1.05rem;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.09);
+      margin-bottom: 0.05rem;
+      transition: box-shadow 0.2s;
     }
-    .lookup-form button:hover {
-      background: #1c7fcc;
+    .pm-field select:focus {
+      box-shadow: 0 0 0 2px #4fc3f7;
     }
-    .result {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: #f9fafc;
-      border: 1px solid #e1e5ee;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .result h3 {
-      margin-bottom: 0.75rem;
-      font-size: 1.2rem;
-      color: #2c3e50;
-    }
-    .result p {
-      font-size: 1.5rem;
+    .pm-form button {
+      padding: 0.7rem 0;
+      border-radius: 0.7rem;
+      border: none;
+      background: linear-gradient(90deg,#2193b0,#6dd5ed);
+      color: #fff;
+      font-size: 1.13rem;
       font-weight: bold;
-      color: #2a9dfa;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      margin-top: 0.2rem;
+      box-shadow: 0 2px 10px rgba(33,147,176,0.08);
+      transition: background 0.18s, transform 0.16s;
     }
-    .links {
+    .pm-form button:hover {
+      background: linear-gradient(90deg,#6dd5ed,#2193b0);
+      transform: translateY(-1px) scale(1.02);
+    }
+    .pm-result {
+      width: 100%;
+      text-align: center;
+      margin-top: 0.5rem;
+      padding: 1.1rem 0.7rem;
+      background: rgba(33,147,176,0.12);
+      border-radius: 1rem;
+      border: 1.5px solid #6dd5ed55;
+      font-size: 1.22rem;
+      font-weight: 500;
+      min-height: 2.5rem;
+      color: #fff;
+    }
+    .pm-result h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4fc3f7;
+      letter-spacing: 0.02em;
+    }
+    .pm-result p {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #fff;
+    }
+    .pm-nav {
+      width: 100%;
       display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-top: 1.5rem;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-top: 2rem;
     }
-    .links a {
-      color: #2a9dfa;
+    .pm-nav a {
+      color: #6dd5ed;
       text-decoration: none;
       font-weight: 600;
-      transition: color 0.2s ease;
+      transition: color 0.2s;
     }
-    .links a:hover {
-      color: #1c7fcc;
+    .pm-nav a:hover {
+      color: #fff;
+      text-shadow: 0 0 5px #6dd5ed;
     }
-    @media (max-width: 560px) {
-      .lookup-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .lookup-form button {
-        width: 100%;
-      }
+    @media (max-width:520px) {
+      .pm-card { padding: 1.1rem 0.5rem; }
+      .pm-nav { flex-direction: column; gap:0.5rem; text-align:center;}
     }
   </style>
 </head>
 <body>
+  <div class="pm-card">
+    <div class="pm-title">PM2.5 Pollution Finder</div>
+    <form method="get" class="pm-form">
+      <div class="pm-field">
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">Select country…</option>
+          {% for country in countries %}
+            <option value="{{ country.code }}"
+              {% if country.code == selected_country %}selected{% endif %}>
+              {{ country.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="pm-field">
+        <label for="year">Year</label>
+        <select id="year" name="year">
+          <option value="">Select year…</option>
+          {% for y in years %}
+            <option value="{{ y }}"
+              {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
+              {{ y }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit">Check Now</button>
+    </form>
 
-  <div class="lookup-card">
-    <div class="lookup-header">🌫️ PM2.5 Air Pollution Lookup</div>
-    <div class="lookup-body">
-      <form method="get" class="lookup-form">
-        <div class="form-group">
-          <label for="country">Country</label>
-          <select id="country" name="country">
-            <option value="">-- Choose country --</option>
-            {% for country in countries %}
-              <option value="{{ country.code }}"
-                {% if country.code == selected_country %}selected{% endif %}>
-                {{ country.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="year">Year</label>
-          <select id="year" name="year">
-            <option value="">-- Choose year --</option>
-            {% for y in years %}
-              <option value="{{ y }}"
-                {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
-                {{ y }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        <button type="submit">Search</button>
-      </form>
+    {% if record %}
+      <div class="pm-result">
+        <h3>{{ record.country.name }} in {{ record.year }}</h3>
+        <p>{{ record.value|default:"No data" }}</p>
+      </div>
+    {% elif selected_country and selected_year %}
+      <div class="pm-result"><em>No data found for that selection.</em></div>
+    {% endif %}
 
-      {% if record %}
-        <div class="result">
-          <h3>PM2.5 in {{ record.year }} for {{ record.country.name }}</h3>
-          <p>{{ record.value|default:"No data" }}</p>
-        </div>
-      {% elif selected_country and selected_year %}
-        <div class="result"><em>No data found for that selection.</em></div>
-      {% endif %}
-
-      <nav class="links">
-        <a href="{% url 'barchart_compare' %}">Compare Two Countries →</a>
-        <a href="{% url 'homepage' %}">← Return to Homepage</a>
-      </nav>
+    <div class="pm-nav">
+      <a href="{% url 'barchart_compare' %}">Compare Countries →</a>
+      <a href="{% url 'homepage' %}">← Back to Homepage</a>
     </div>
   </div>
-
 </body>
 </html>
 
