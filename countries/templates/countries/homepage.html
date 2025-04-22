@@ -1,11 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Homepage</title>
+    <title>PM2.5 Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #ffffff);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #00796b;
+            color: white;
+            padding: 30px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .intro {
+            margin: 30px auto;
+            max-width: 700px;
+            font-size: 1.2em;
+            color: #444;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 20px;
+            font-size: 1em;
+            color: white;
+            background-color: #009688;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #00796b;
+        }
+
+        .chart-container {
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        footer {
+            margin-top: 50px;
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Homepage</h1>
-    <p><a href="{% url 'pm25_lookup' %}">Search for One Country →</a></p>
-    <p><a href="{% url 'barchart_compare' %}">Compare Two Countries →</a></p>
+    <header>
+        <h1>🌍 PM2.5 Pollution Dashboard</h1>
+    </header>
+
+    <div class="intro">
+        <p>Welcome! This site helps you explore historical PM2.5 air pollution data by country and year.</p>
+    </div>
+
+    <a href="{% url 'pm25_lookup' %}" class="btn">🔎 Search by Country</a>
+    <a href="{% url 'barchart_compare' %}" class="btn">📊 Compare Two Countries</a>
+
+    <!-- 图表区域 -->
+    <div class="chart-container">
+        <h2>🌫️ Top 5 Most Polluted Countries in {{ latest_year }}</h2>
+        <canvas id="pm25Chart" height="300"></canvas>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
+    </footer>
+
+    <script>
+        const countries = {{ countries_json|safe }};
+        const values = {{ values_json|safe }};
+
+        const ctx = document.getElementById('pm25Chart').getContext('2d');
+        const pm25Chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: countries,
+                datasets: [{
+                    label: 'PM2.5 Level (µg/m³)',
+                    data: values,
+                    backgroundColor: 'rgba(0, 150, 136, 0.7)',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Top Polluted Countries in {{ latest_year }}'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ": " + context.parsed.y + " µg/m³";
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'PM2.5 Level (µg/m³)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

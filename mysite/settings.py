@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '*',
+    'crystalenjoy-beatlesmary-8000.codio-box.uk/'
 ]
 
 # Application definition

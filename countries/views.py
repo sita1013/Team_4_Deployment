@@ -1,8 +1,21 @@
 from django.shortcuts import render
 from .models import PM25Record, Country
+from django.db.models import Max
 
 def homepage(request):
-    return render(request, 'countries/homepage.html')
+    
+    latest_year = PM25Record.objects.aggregate(Max('year'))['year__max']
+
+    top_records = PM25Record.objects.filter(year=latest_year).order_by('-value')[:5]
+
+    countries = [record.country.name for record in top_records]
+    values = [record.value for record in top_records]
+
+    return render(request, 'countries/homepage.html', {
+        'countries_json': countries,
+        'values_json': values,
+        'latest_year': latest_year,
+    })
 
 def pm25_lookup_view(request):
     selected_country = request.GET.get('country')
