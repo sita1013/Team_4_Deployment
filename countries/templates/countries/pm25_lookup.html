@@ -1,41 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PM2.5 Lookup</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PM2.5 Air Pollution Lookup</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .lookup-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      max-width: 720px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .lookup-header {
+      background: #2a9dfa;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    .lookup-body {
+      padding: 1.5rem;
+    }
+    .lookup-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 140px;
+    }
+    .form-group label {
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .form-group select {
+      padding: 0.5rem;
+      border: 1px solid #ccd1d9;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .form-group select:focus {
+      outline: none;
+      border-color: #2a9dfa;
+    }
+    .lookup-form button {
+      background: #2a9dfa;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .lookup-form button:hover {
+      background: #1c7fcc;
+    }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f9fafc;
+      border: 1px solid #e1e5ee;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .result h3 {
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+      color: #2c3e50;
+    }
+    .result p {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2a9dfa;
+    }
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+    .links a {
+      color: #2a9dfa;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+    .links a:hover {
+      color: #1c7fcc;
+    }
+    @media (max-width: 560px) {
+      .lookup-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .lookup-form button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>PM2.5 Air Pollution Lookup</h1>
-    <form method="get">
-        <label for="country">Country:</label>
-        <select name="country" id="country">
-            <option value="">--Choose--</option>
+
+  <div class="lookup-card">
+    <div class="lookup-header">🌫️ PM2.5 Air Pollution Lookup</div>
+    <div class="lookup-body">
+      <form method="get" class="lookup-form">
+        <div class="form-group">
+          <label for="country">Country</label>
+          <select id="country" name="country">
+            <option value="">-- Choose country --</option>
             {% for country in countries %}
-                <option value="{{ country.code }}" {% if country.code == selected_country %}selected{% endif %}>
-                    {{ country.name }}
-                </option>
+              <option value="{{ country.code }}"
+                {% if country.code == selected_country %}selected{% endif %}>
+                {{ country.name }}
+              </option>
             {% endfor %}
-        </select>
-
-        <label for="year">Year:</label>
-        <select name="year" id="year">
-            <option value="">--Choose--</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="year">Year</label>
+          <select id="year" name="year">
+            <option value="">-- Choose year --</option>
             {% for y in years %}
-                <option value="{{ y }}" {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
-                    {{ y }}
-                </option>
+              <option value="{{ y }}"
+                {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
+                {{ y }}
+              </option>
             {% endfor %}
-        </select>
-
+          </select>
+        </div>
         <button type="submit">Search</button>
-    </form>
+      </form>
 
-    {% if record %}
-        <h3>PM2.5 Level for {{ record.country.name }} in {{ record.year }}:</h3>
-        <p><strong>{{ record.value|default:"No data" }}</strong></p>
-    {% elif selected_country and selected_year %}
-        <p><em>No data found for that selection.</em></p>
-    {% endif %}
-    <p><a href="{% url 'barchart_compare' %}">Compare Two Countries →</a></p>
-    <p><a href="{% url 'homepage' %}">Return to Homepage →</a></p>
+      {% if record %}
+        <div class="result">
+          <h3>PM2.5 in {{ record.year }} for {{ record.country.name }}</h3>
+          <p>{{ record.value|default:"No data" }}</p>
+        </div>
+      {% elif selected_country and selected_year %}
+        <div class="result"><em>No data found for that selection.</em></div>
+      {% endif %}
+
+      <nav class="links">
+        <a href="{% url 'barchart_compare' %}">Compare Two Countries →</a>
+        <a href="{% url 'homepage' %}">← Return to Homepage</a>
+      </nav>
+    </div>
+  </div>
+
 </body>
 </html>
+

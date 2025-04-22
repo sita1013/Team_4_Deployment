@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '*',
     'crystalenjoy-beatlesmary-8000.codio-box.uk/'
+    'cadetsamuel-hermandiesel-8000.codio-box.uk/'
 ]
 
 # Application definition
@@ -80,7 +81,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
