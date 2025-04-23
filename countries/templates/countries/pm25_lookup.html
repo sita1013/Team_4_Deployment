@@ -165,7 +165,7 @@
       <div class="pm-field">
         <label for="country">Country</label>
         <select id="country" name="country">
-          <option value="">Select country…</option>
+          <option value="">Select Country…</option>
           {% for country in countries %}
             <option value="{{ country.code }}"
               {% if country.code == selected_country %}selected{% endif %}>
@@ -178,7 +178,7 @@
       <div class="pm-field">
         <label for="year">Year</label>
         <select id="year" name="year">
-          <option value="">Select year…</option>
+          <option value="">Select Year…</option>
           {% for y in years %}
             <option value="{{ y }}"
               {% if y|stringformat:"s" == selected_year %}selected{% endif %}>
@@ -198,7 +198,7 @@
         <p style="margin-top: 0.5rem; color: #6dd5ed;">Income Level: {{ income_level }}</p>
       </div>
     {% else %}
-      <div class="pm-result"><em>No data found for that year.</em></div>
+      <div class="pm-result"><em>No data found for this year.</em></div>
     {% endif %}
   {% endif %}
   
