@@ -88,8 +88,8 @@
         <p>Welcome!</p> <p>This site helps you explore historical PM2.5 air pollution data by country and year.</p>
     </div>
 
-    <a href="{% url 'pm25_lookup' %}" class="btn">🔎 Search by Country</a>
-    <a href="{% url 'barchart_compare' %}" class="btn">📊 Compare Two Countries</a>
+    <a href="{% url 'pm25_lookup' %}" class="btn">Search by Country</a>
+    <a href="{% url 'barchart_compare' %}" class="btn">Compare Two Countries</a>
 
     <!-- chart area -->
     <div class="chart-container">
@@ -106,7 +106,7 @@
             data: {
                 labels: countries,
                 datasets: [{
-                    label: 'PM2.5 Level (% Above Safe Limit)',
+                    label: 'PM2.5 (% Above Safe Limit)',
                     data: values,
 
                     backgroundColor: 'rgba(164, 244, 236, 0.99)',
@@ -138,7 +138,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'PM2.5 Level (% Above Safe Limit)',
+                            text: 'PM2.5 (% Above Safe Limit)',
                             font: {
                                 size: 14
                               }
