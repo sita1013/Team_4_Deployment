@@ -1,84 +1,237 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Compare PM2.5 Levels</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --primary: #4e79a7;
+            --accent: #f28e2b;
+        }
+        body.dark-mode {
+            --bg-color: #1e1e2f;
+            --card-bg: #2a2a40;
+            --text-color: #eee;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 50px auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        select, button {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            min-width: 180px;
+        }
+
+        select:hover, button:hover {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        a {
+            color: var(--primary);
+            margin-right: 15px;
+        }
+
+        .message {
+            text-align: center;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        .switch {
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Compare PM2.5 Levels Between Two Countries</h1>
+    <div class="container">
+        <h1>Compare PM2.5 Levels</h1>
 
-    <form method="get">
-        <label>Country 1:</label>
-        <select name="country1">
-            <option value="">--Choose--</option>
-            {% for country in countries %}
-                <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
-            {% endfor %}
-        </select>
+        <form method="get">
+            <div>
+                <label for="country1">Country 1:</label>
+                <select name="country1" id="country1" required>
+                    <option value="" disabled {% if not country1_code %}selected{% endif %}>--Choose--</option>
+                    {% for country in countries %}
+                        <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <label>Country 2:</label>
-        <select name="country2">
-            <option value="">--Choose--</option>
-            {% for country in countries %}
-                <option value="{{ country.code }}" {% if country.code == country2_code %}selected{% endif %}>{{ country.name }}</option>
-            {% endfor %}
-        </select>
+            <div>
+                <label for="country2">Country 2:</label>
+                <select name="country2" id="country2" required>
+                    <option value="" disabled {% if not country2_code %}selected{% endif %}>--Choose--</option>
+                    {% for country in countries %}
+                        <option value="{{ country.code }}" {% if country.code == country2_code %}selected{% endif %}>{{ country.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <label>Year:</label>
-        <select name="year">
-            <option value="">--Choose--</option>
-            {% for year in years %}
-                <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
-            {% endfor %}
-        </select>
+            <div>
+                <label for="year">Year:</label>
+                <select name="year" id="year" required>
+                    <option value="" disabled {% if not selected_year %}selected{% endif %}>--Choose--</option>
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <button type="submit">Compare</button>
-    </form>
+            <div>
+                <button type="submit">Compare</button>
+            </div>
+        </form>
 
-    {% if record1 and record2 %}
-        <canvas id="barChart" width="400" height="100"></canvas>
-        <script>
-            const ctx = document.getElementById('barChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
-                datasets: [
-                    {
-                        label: '{{ record1.country.name }}',
-                        data: [{{ record1.value|default:"0" }}, 0],
-                        backgroundColor: '#4e79a7'
-                    },
-                    {
-                        label: '{{ record2.country.name }}',
-                        data: [0, {{ record2.value|default:"0" }}],
-                        backgroundColor: '#f28e2b'
-                    }
-                ]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'PM2.5 in {{ selected_year }}'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'PM2.5 (%)'
+        {% if record1 and record2 %}
+            <div class="controls">
+                <button class="switch" onclick="toggleDarkMode()">🌓 Toggle Theme</button>
+                <button class="switch" onclick="toggleChartType()">🔁 Switch Chart</button>
+                <button class="switch" onclick="downloadChart()">📥 Download Chart</button>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <script>
+                let chartType = 'bar';
+                const ctx = document.getElementById('barChart').getContext('2d');
+                let chart;
+
+                function renderChart(type = 'bar') {
+                    if (chart) chart.destroy();
+
+                    chart = new Chart(ctx, {
+                        type: type,
+                        data: {
+                            labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
+                            datasets: [{
+                                label: 'PM2.5 Level',
+                                data: [{{ record1.value|default:"0" }}, {{ record2.value|default:"0" }}],
+                                backgroundColor: ['var(--primary)', 'var(--accent)'],
+                                borderColor: ['#3b5b8f', '#cc701e'],
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'PM2.5 Levels in {{ selected_year }}'
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'PM2.5 (µg/m³)'
+                                    }
+                                }
+                            }
                         }
-                    }
+                    });
                 }
-            }
-        });
-        </script>
-    {% elif selected_year and country1_code and country2_code %}
-        <p><em>Data not available for one or both countries in {{ selected_year }}</em></p>
-    {% endif %}
-    <p><a href="{% url 'pm25_lookup' %}">← Return to Search</a></p>
-    <p><a href="{% url 'homepage' %}">← Return to Homepage</a></p>
+
+                function toggleDarkMode() {
+                    document.body.classList.toggle('dark-mode');
+                }
+
+                function toggleChartType() {
+                    chartType = chartType === 'bar' ? 'line' : 'bar';
+                    renderChart(chartType);
+                }
+
+                function downloadChart() {
+                    const a = document.createElement('a');
+                    a.href = chart.toBase64Image();
+                    a.download = 'pm25_chart.png';
+                    a.click();
+                }
+
+                renderChart(chartType);
+            </script>
+        {% elif selected_year and country1_code and country2_code %}
+            <p class="message">Data not available for one or both countries in {{ selected_year }}.</p>
+        {% endif %}
+
+        <p style="margin-top: 40px;">
+            <a href="{% url 'pm25_lookup' %}">← Return to Search</a>
+            <a href="{% url 'homepage' %}">← Return to Homepage</a>
+        </p>
+    </div>
 </body>
 </html>
+
+
