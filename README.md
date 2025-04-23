@@ -53,13 +53,13 @@ All rights are reserved by the authors (Team 4, 2025).
 
 
 ## Installation
-- must have python 3.12.2
+- python version is set to 3.12.2
 ```bash
 git clone https://github.com/sita1013/Team_4_CS551Q-Final.git
 cd Team_4_CS551Q-Final
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python manage.py parse_country countries/country_data/pm25_data.xlsx.xlsx
-python manage.py runserver 0.0.0.0:8000
+python3 manage.py parse_country countries/country_data/pm25_data.xlsx.xlsx
+python3 manage.py runserver 0.0.0.0:8000
 * then visit <https://aliasoctavia-bingochamber-8000.codio-box.uk/>

@@ -160,7 +160,7 @@
 </head>
 <body>
   <div class="pm-card">
-    <div class="pm-title">PM2.5 Pollution Finder</div>
+    <div class="pm-title">PM2.5 Levels Search</div>
     <form method="get" class="pm-form">
       <div class="pm-field">
         <label for="country">Country</label>
@@ -204,7 +204,7 @@
   
   {% if selected_country %}
     <div class="pm-result" style="margin-top: 2rem;">
-      <h3>Historical PM2.5 in {{ country.name }}</h3>
+      <h3>Historical Data in {{ country.name }}</h3>
       <div style="width:100%; height:300px;">
         <canvas id="barChart"></canvas>
       </div>
@@ -228,7 +228,7 @@
           plugins: {
             title: {
               display: true,
-              text: 'PM2.5 Levels Over the Years in {{ country.name }}',
+              text: 'PM2.5 Levels in {{ country.name }}',
               font: { size: 18 }
             },
             legend: { display: false }
