@@ -192,7 +192,7 @@
     {% if record %}
       <div class="pm-result">
         <h3>{{ record.country.name }} in {{ record.year }}</h3>
-        <p>{{ record.value|default:"No data" }}</p>
+        <p>{{ record.value|floatformat:1 }}%</p>
       </div>
     {% elif selected_country and selected_year %}
       <div class="pm-result"><em>No data found for that selection.</em></div>
@@ -200,7 +200,7 @@
     
     {% if selected_country %}
       <div class="pm-result" style="margin-top: 2rem;">
-        <h3>Historical PM2.5 Levels in {{ country_name }}</h3>
+        <h3>History</h3>
         <div style="width:100%; height:300px;">
           <canvas id="barChart"></canvas>
         </div>
@@ -224,7 +224,7 @@
             plugins: {
               title: {
                 display: true,
-                text: 'PM2.5 Levels Over the Years in {{ country_name }}',
+                text: 'PM2.5 Levels in {{ country_name }}',
                 font: { size: 18 }
               },
               legend: { display: false }
