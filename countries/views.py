@@ -23,6 +23,18 @@ def pm25_lookup_view(request):
     countries = Country.objects.order_by('name')
     years = PM25Record.objects.values_list('year', flat=True).distinct().order_by('year')
     record = None
+    yearly_records = []
+    year_list = []
+    value_list = []
+    country_name = ""
+    if selected_country:
+        yearly_records = PM25Record.objects.filter(
+            country__code=selected_country
+        ).order_by('year')
+        year_list = [r.year for r in yearly_records]
+        value_list = [r.value for r in yearly_records]
+        if yearly_records:
+            country_name = yearly_records[0].country.name
     if selected_country and selected_year:
         record = PM25Record.objects.filter(
             country__code=selected_country,
@@ -34,6 +46,9 @@ def pm25_lookup_view(request):
         'selected_country': selected_country,
         'selected_year': selected_year,
         'record': record,
+        'year_list': year_list,
+        'value_list': value_list,
+        'country_name': country_name,
     }
     return render(request, 'countries/pm25_lookup.html', context)
 
