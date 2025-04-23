@@ -179,7 +179,9 @@
     {% elif selected_country and selected_year %}
       <div class="pm-result"><em>No data found for that selection.</em></div>
     {% endif %}
-
+    <footer>
+      <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
+    </footer>
     <div class="pm-nav">
       <a href="{% url 'barchart_compare' %}">Compare Countries →</a>
       <a href="{% url 'homepage' %}">← Back to Homepage</a>

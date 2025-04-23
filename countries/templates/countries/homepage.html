@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
             background: linear-gradient(to right, #e0f7fa, #ffffff);
             margin: 0;
             padding: 0;
@@ -67,15 +67,11 @@
     <a href="{% url 'pm25_lookup' %}" class="btn">🔎 Search by Country</a>
     <a href="{% url 'barchart_compare' %}" class="btn">📊 Compare Two Countries</a>
 
-    <!-- 图表区域 -->
+    <!-- chart area -->
     <div class="chart-container">
         <h2>🌫️ Top 5 Most Polluted Countries in {{ latest_year }}</h2>
         <canvas id="pm25Chart" height="300"></canvas>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
-    </footer>
 
     <script>
         const countries = {{ countries_json|safe }};
@@ -87,8 +83,9 @@
             data: {
                 labels: countries,
                 datasets: [{
-                    label: 'PM2.5 Level (µg/m³)',
+                    label: 'PM2.5 Level (% Above Safe Limit)',
                     data: values,
+
                     backgroundColor: 'rgba(0, 150, 136, 0.7)',
                     borderRadius: 8
                 }]
@@ -114,12 +111,15 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'PM2.5 Level (µg/m³)'
+                            text: 'PM2.5 Level (% Above Safe Limit)'
                         }
                     }
                 }
             }
         });
     </script>
+    <footer>
+        <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
+    </footer>
 </body>
 </html>
