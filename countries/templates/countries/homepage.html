@@ -1,67 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PM2.5 Dashboard</title>
+    <title>PM2.5 Homepage</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
+            background: linear-gradient(135deg, #373B44 0%, #4286f4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             font-family: 'Montserrat', 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #e0f7fa, #ffffff);
             margin: 0;
-            padding: 0;
+            padding: 1.5rem;
             text-align: center;
-        }
-
+          }
         header {
-            background-color: #00796b;
+            background: rgba(24,28,38,0.96);
             color: white;
-            padding: 30px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
+            padding: 1rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.28);
+            width: 100%;
+            max-width: 620px;
+            margin: 1.5rem auto;
+            font-size: 1.05em;
+            animation: floatIn 0.8s cubic-bezier(.6,.3,.3,1.5);
+          }
         .intro {
             margin: 30px auto;
             max-width: 700px;
             font-size: 1.2em;
-            color: #444;
-        }
-
+            color: #ddd;
+            background: rgba(24,28,38,0.85);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+          }
+          
         .btn {
             display: inline-block;
-            padding: 15px 25px;
+            padding: 0.9rem 1.6rem;
             margin: 20px;
             font-size: 1em;
             color: white;
-            background-color: #009688;
+            background: linear-gradient(90deg, #2193b0, #6dd5ed);
             border: none;
-            border-radius: 8px;
+            border-radius: 0.8rem;
             text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(33,147,176,0.2);
+            transition: background 0.3s ease, transform 0.2s ease;
+          }
         .btn:hover {
-            background-color: #00796b;
-        }
-
+            background: linear-gradient(90deg, #6dd5ed, #2193b0);
+            transform: translateY(-2px) scale(1.03);
+          }
         .chart-container {
             max-width: 700px;
             margin: 40px auto;
-        }
-
+            background: rgba(24,28,38,0.92);
+            padding: 2rem;
+            border-radius: 1.2rem;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+            color: #fff;
+          }
         footer {
             margin-top: 50px;
-            color: #888;
+            color: #aaa;
             font-size: 0.9em;
-        }
+            text-align: center;
+          }
+        @keyframes floatIn {
+            0% {transform:translateY(80px) scale(0.98);opacity:0;}
+            100% {transform:none;opacity:1;}
+          }
     </style>
 </head>
 <body>
     <header>
-        <h1>🌍 PM2.5 Pollution Dashboard</h1>
+        <h1>PM2.5 Pollution Dashboard</h1>
     </header>
 
     <div class="intro">
-        <p>Welcome! This site helps you explore historical PM2.5 air pollution data by country and year.</p>
+        <p>Welcome!</p> <p>This site helps you explore historical PM2.5 air pollution data by country and year.</p>
     </div>
 
     <a href="{% url 'pm25_lookup' %}" class="btn">🔎 Search by Country</a>
@@ -76,7 +100,6 @@
     <script>
         const countries = {{ countries_json|safe }};
         const values = {{ values_json|safe }};
-
         const ctx = document.getElementById('pm25Chart').getContext('2d');
         const pm25Chart = new Chart(ctx, {
             type: 'bar',
@@ -86,7 +109,7 @@
                     label: 'PM2.5 Level (% Above Safe Limit)',
                     data: values,
 
-                    backgroundColor: 'rgba(0, 150, 136, 0.7)',
+                    backgroundColor: 'rgba(164, 244, 236, 0.99)',
                     borderRadius: 8
                 }]
             },
@@ -96,7 +119,11 @@
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Top Polluted Countries in {{ latest_year }}'
+                        text: 'Top Polluted Countries in {{ latest_year }}',
+                        font: {
+                            size: 18
+                          }
+          
                     },
                     tooltip: {
                         callbacks: {
@@ -111,7 +138,11 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'PM2.5 Level (% Above Safe Limit)'
+                            text: 'PM2.5 Level (% Above Safe Limit)',
+                            font: {
+                                size: 14
+                              }
+              
                         }
                     }
                 }
