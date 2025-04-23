@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from .models import PM25Record, Country
 from django.db.models import Max
@@ -10,8 +11,8 @@ def homepage(request):
     countries = [record.country.name for record in top_records]
     values = [record.value for record in top_records]
     return render(request, 'countries/homepage.html', {
-        'countries_json': countries,
-        'values_json': values,
+        'countries_json': json.dumps(countries),
+        'values_json': json.dumps(values),
         'latest_year': latest_year,
     })
 
