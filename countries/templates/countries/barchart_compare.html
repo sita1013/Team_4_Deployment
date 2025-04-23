@@ -162,128 +162,117 @@
         font-size: 0.9em;
         text-align: center;
       }
-
   </style>
 </head>
+
 <body>
   <div class="pm-card">
     <div class="pm-title">Compare PM2.5 Levels Between Two Countries</div>
+
     <form method="get" class="pm-form">
-        <div class="pm-fields-row">
-          <div class="pm-field">
-            <label for="country1">Country 1:</label>
-            <select name="country1" id="country1">
-              <option value="">--Choose--</option>
-              {% for country in countries %}
-                <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
-              {% endfor %}
-            </select>
-        </div>
-      
+      <div class="pm-fields-row">
         <div class="pm-field">
-            <label for="country2">Country 2:</label>
-            <select name="country2" id="country2">
-              <option value="">--Choose--</option>
-              {% for country in countries %}
-                <option value="{{ country.code }}" {% if country.code == country2_code %}selected{% endif %}>{{ country.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-      
-        <div class="pm-field">
-          <label for="year">Year:</label>
-          <select name="year" id="year">
+          <label for="country1">Country 1:</label>
+          <select name="country1" id="country1">
             <option value="">--Choose--</option>
-            {% for year in years %}
-              <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% for country in countries %}
+              <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
             {% endfor %}
           </select>
         </div>
-      
-        <button type="submit">Compare</button>
+
+        <div class="pm-field">
+          <label for="country2">Country 2:</label>
+          <select name="country2" id="country2">
+            <option value="">--Choose--</option>
+            {% for country in countries %}
+              <option value="{{ country.code }}" {% if country.code == country2_code %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="pm-field">
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+          <option value="">--Choose--</option>
+          {% for year in years %}
+            <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit">Compare</button>
     </form>
-      
+
     {% if record1 and record2 %}
-    <div class="pm-result">
-        <div style="width:100%; height:300px;">
+      <div class="pm-result">
+        <h3>{{ record1.country.name }} vs {{ record2.country.name }} in {{ selected_year }}</h3>
+        <p>
+          <strong>{{ record1.country.name }}:</strong> {{ record1.value|floatformat:1 }}%<br>
+          <span style="color:#6dd5ed;">Income Level: {{ income1 }}</span>
+        </p>
+        <p>
+          <strong>{{ record2.country.name }}:</strong> {{ record2.value|floatformat:1 }}%<br>
+          <span style="color:#6dd5ed;">Income Level: {{ income2 }}</span>
+        </p>
+        <div style="width:100%; height:300px; margin-top: 1rem;">
           <canvas id="barChart"></canvas>
         </div>
       </div>
+
       <script>
         const ctx = document.getElementById('barChart').getContext('2d');
         new Chart(ctx, {
           type: 'bar',
           data: {
             labels: ['{{ record1.country.name }}', '{{ record2.country.name }}'],
-            datasets: [
-              {
-                label: '{{ record1.country.name }}',
-                data: [{{ record1.value|default:"0" }}, 0],
-                backgroundColor: '#4e79a8'
-              },
-              {
-                label: '{{ record2.country.name }}',
-                data: [0, {{ record2.value|default:"0" }}],
-                backgroundColor: '#f28e2b'
-              }
-            ]
+            datasets: [{
+              label: 'PM2.5 in {{ selected_year }}',
+              data: [{{ record1.value|default:"0" }}, {{ record2.value|default:"0" }}],
+              backgroundColor: ['#4e79a8', '#f28e2b']
+            }]
           },
           options: {
             maintainAspectRatio: false,
             plugins: {
               title: {
                 display: true,
-                text: 'PM2.5 in {{ selected_year }}',
-                font: {
-                  size: 18
-                }
+                text: 'PM2.5 Levels in {{ selected_year }}',
+                font: { size: 18 }
               },
-              legend: {
-                labels: {
-                  font: {
-                    size: 14
-                  }
-                }
-              }
+              legend: { display: false }
             },
             scales: {
               x: {
-                ticks: {
-                  font: {
-                    size: 14
-                  }
-                }
+                ticks: { font: { size: 14 } }
               },
               y: {
-                ticks: {
-                  font: {
-                    size: 14
-                  }
-                },
+                beginAtZero: true,
+                ticks: { font: { size: 14 } },
                 title: {
                   display: true,
                   text: 'PM2.5 (% Above Safe Limit)',
-                  font: {
-                    size: 16
-                  }
+                  font: { size: 16 }
                 }
               }
             }
           }
         });
       </script>
-    {% elif selected_year and country1_code and country2_code %}
-      <div class="pm-result"><em>Data not available for one or both countries in {{ selected_year }}</em></div>
+    {% else %}
+      {% if selected_year and country1_code and country2_code %}
+        <div class="pm-result"><em>Data not available for one or both countries in {{ selected_year }}</em></div>
+      {% endif %}
     {% endif %}
+
     <footer>
-        <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
+      <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
     </footer>
     <div class="pm-nav">
       <a href="{% url 'pm25_lookup' %}">← Return to Search</a>
       <a href="{% url 'homepage' %}">← Back to Homepage</a>
     </div>
   </div>
-
 </body>
 </html>

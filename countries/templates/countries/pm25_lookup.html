@@ -174,6 +174,7 @@
           {% endfor %}
         </select>
       </div>
+
       <div class="pm-field">
         <label for="year">Year</label>
         <select id="year" name="year">
@@ -188,72 +189,78 @@
       </div>
       <button type="submit">Check</button>
     </form>
+
+    {% if selected_country and selected_year %}
     {% if record %}
       <div class="pm-result">
         <h3>{{ record.country.name }} in {{ record.year }}</h3>
         <p>{{ record.value|floatformat:1 }}%</p>
+        <p style="margin-top: 0.5rem; color: #6dd5ed;">Income Level: {{ income_level }}</p>
       </div>
-    {% elif selected_country and selected_year %}
-      <div class="pm-result"><em>No data found for that selection.</em></div>
+    {% else %}
+      <div class="pm-result"><em>No data found for that year.</em></div>
     {% endif %}
-    
-    {% if selected_country %}
-      <div class="pm-result" style="margin-top: 2rem;">
-        <h3>History</h3>
-        <div style="width:100%; height:300px;">
-          <canvas id="barChart"></canvas>
-        </div>
+  {% endif %}
+  
+  {% if selected_country %}
+    <div class="pm-result" style="margin-top: 2rem;">
+      <h3>Historical PM2.5 in {{ country.name }}</h3>
+      <div style="width:100%; height:300px;">
+        <canvas id="barChart"></canvas>
       </div>
-    
-      <script>
-        const ctx = document.getElementById('barChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: {{ year_list|safe }},
-            datasets: [{
-              label: '{{ country_name }}',
-              data: {{ value_list|safe }},
-              backgroundColor: '#4e79a8'
-            }]
+    </div>
+  
+    <script>
+      const ctx = document.getElementById('barChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ year_list|safe }},
+          datasets: [{
+            label: '{{ country.name }}',
+            data: {{ value_list|safe }},
+            backgroundColor: '#4e79a8'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'PM2.5 Levels Over the Years in {{ country.name }}',
+              font: { size: 18 }
+            },
+            legend: { display: false }
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
+          scales: {
+            x: {
               title: {
                 display: true,
-                text: 'PM2.5 Levels in {{ country_name }}',
-                font: { size: 18 }
+                text: 'Year',
+                font: { size: 16 }
               },
-              legend: { display: false }
+              ticks: { font: { size: 14 } }
             },
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: 'Year',
-                  font: { size: 16 }
-                },
-                ticks: { font: { size: 14 } }
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'PM2.5 (% Above Safe Limit)',
+                font: { size: 16 }
               },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'PM2.5 (% Above Safe Limit)',
-                  font: { size: 16 }
-                },
-                ticks: { font: { size: 14 } }
-              }
+              ticks: { font: { size: 14 } }
             }
           }
-        });
-      </script>
-    {% endif %}
-          <footer>
+        }
+      });
+    </script>
+  {% endif %}
+  
+    <footer>
       <p>&copy; 2025 Team 4 – CS551Q Final Project</p>
     </footer>
+
     <div class="pm-nav">
       <a href="{% url 'barchart_compare' %}">Compare Countries →</a>
       <a href="{% url 'homepage' %}">← Back to Homepage</a>
