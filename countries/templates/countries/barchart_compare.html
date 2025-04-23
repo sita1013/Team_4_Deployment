@@ -127,9 +127,7 @@
       padding: 1.1rem 0.7rem;
       background: rgba(33,147,176,0.12);
       border-radius: 1rem;
-      border: 1.5px solid #6dd5ed55;
-      font-size: 1.22rem;
-      font-weight: 500;
+      border: 1.5px solid rgba(109, 213, 237, 0.33);
       min-height: 2.5rem;
       color: #fff;
     }
@@ -159,16 +157,6 @@
       .pm-nav { flex-direction: column; gap:0.5rem; text-align:center;}
     }
 
-    .pm-country-labels {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        padding: 0.5rem 0.7rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #6dd5ed;
-        letter-spacing: 0.02em;
-      }      
 
   </style>
 </head>
@@ -185,9 +173,9 @@
                 <option value="{{ country.code }}" {% if country.code == country1_code %}selected{% endif %}>{{ country.name }}</option>
               {% endfor %}
             </select>
-          </div>
+        </div>
       
-          <div class="pm-field">
+        <div class="pm-field">
             <label for="country2">Country 2:</label>
             <select name="country2" id="country2">
               <option value="">--Choose--</option>
@@ -227,7 +215,7 @@
               {
                 label: '{{ record1.country.name }}',
                 data: [{{ record1.value|default:"0" }}, 0],
-                backgroundColor: '#4e79a7'
+                backgroundColor: '#4e79a8'
               },
               {
                 label: '{{ record2.country.name }}',
@@ -241,15 +229,39 @@
             plugins: {
               title: {
                 display: true,
-                text: 'PM2.5 in {{ selected_year }}'
+                text: 'PM2.5 in {{ selected_year }}',
+                font: {
+                  size: 18
+                }
+              },
+              legend: {
+                labels: {
+                  font: {
+                    size: 14
+                  }
+                }
               }
             },
             scales: {
+              x: {
+                ticks: {
+                  font: {
+                    size: 14
+                  }
+                }
+              },
               y: {
-                beginAtZero: true,
+                ticks: {
+                  font: {
+                    size: 14
+                  }
+                },
                 title: {
                   display: true,
-                  text: 'PM2.5 (%)'
+                  text: 'PM2.5 (% Above Safe Limit)',
+                  font: {
+                    size: 16
+                  }
                 }
               }
             }
