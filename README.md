@@ -34,21 +34,6 @@ Core Python files:
 - urls.py: Routes connected to the views
 - tests.py
 
-'mysite' is the project folder and 'countries' is the app folder. In 'mysite', 'url' path does contain admin, although 
-we haven't added any admin details as of yet. The second url path is for the 'countries' folder for the app. The 
-'countries' folder countains 'country_data', 'management/commands', and 'templates/countries' folders. 
-
-'country_data' holds the excel file where all the data is stored. 'management/commands' holds a python folder for 'parse_country' to 
-read the excel file data. 'templates/countries' contains three html files. First for the 'homepage', second for the 
-'pm25_lookup' page, and third for the 'barchart_compare' page. 'barchart_compare' uses Chart.js to display the data 
-in bar graphs but the other files only have html and django template language structures. 
-
-Outside of these folders but still in 'countries' folder, we have 'models', 'tests', 'urls', and 'views' python files. 
-In 'models', we have two classess. One being country and the second being PM25 Record. In 'tests', we have lKj;fa;lsdjfa;ldkjfa;sldfkjas;ldkjfa;lsdkjf;lasdkjfla;ksdjfasdl;kjf
-In 'views', we have three main functions. The firs for the logic behind the 'homepage', the second for the logic behind
-the 'pm25_lookup' page, and the third for the 'barchart_compare' page. From there are the 'urls', where they connect
-to the functions in 'views'. 
-
 
 ## Technologies
 Backend: Django 4.x
@@ -57,7 +42,9 @@ Database: SQLite (development), PostgreSQL (intended for production)
 
 ## Notes
 We initially planned to use PostgreSQL for deployment and API-driven frontend interactions.
-Due to limitations in Codio, we used SQLite for development. We aim to shift to PostgreSQL for final deployment using VS Code or other cloud environments.
+Due to limitations in Codio, we used SQLite for development. We aim to shift to PostgreSQL for final deployment using VS Code or other cloud environments. 
+
+All logic and data manipulation is handled server-side in views. JavaScript is only used to render Chart.js visuals using safely passed JSON data from the backend.
 
 
 ## License
