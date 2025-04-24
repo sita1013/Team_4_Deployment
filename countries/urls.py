@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('', views.homepage, name='homepage'),
     path('pm25/', views.pm25_lookup_view, name='pm25_lookup'),
