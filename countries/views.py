@@ -103,5 +103,7 @@ def load_metadata(request):
             code=item["code"],
             defaults={"income_level": item["income_level"]}
         )
+        # Just add a harmless comment
+# Updated deployment test
     return JsonResponse({"status": "Metadata loaded"})
 
