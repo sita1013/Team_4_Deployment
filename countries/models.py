@@ -19,6 +19,7 @@ class PM25Record(models.Model):
 class CountryMetadata(models.Model):
     code = models.CharField(max_length=3, unique=True)
     income_level = models.CharField(max_length=100)
-    def __str__(self):
+
+   def __str__(self):
         return f"{self.code} - {self.income_level}"
 

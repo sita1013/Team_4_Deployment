@@ -22,7 +22,7 @@ class Command(BaseCommand):
         )
         df_melted["Year"] = pd.to_numeric(df_melted["Year"], errors="coerce")
         df_melted.dropna(subset=["Year"], inplace=True)
-        df_melted["Year"] = df_melted["Year"].astype(int) + 1
+        df_melted["Year"] = df_melted["Year"].astype(int)
         df_melted.dropna(subset=["PM25_Level"], inplace=True)
         for _, row in df_melted.iterrows():
             country, _ = Country.objects.get_or_create(
