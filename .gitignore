@@ -22,9 +22,10 @@ media/
 staticfiles/
 local_settings.py
 
-# Migrations (optional: sometimes excluded, sometimes tracked)
-**/migrations/*.py
-!**/migrations/__init__.py
+# Optional: keep migrations tracked (important for deployment!)
+# **/migrations/*.py
+!**/migrations/*.py
+
 
 # Environment variables & secrets
 .env
