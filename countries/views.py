@@ -99,6 +99,9 @@ def load_metadata(request):
         {"country_name": "India", "income_level": "Lower-Middle"},
     ]
     for item in data:
-        CountryMetadata.objects.create(**item)
+        CountryMetadata.objects.update_or_create(
+            country_name=item["country_name"],
+            defaults={"income_level": item["income_level"]}
+        )
     return JsonResponse({"status": "Metadata loaded"})
 
