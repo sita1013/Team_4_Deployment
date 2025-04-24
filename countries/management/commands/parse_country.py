@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
         self.stdout.write("Available Indicator Names:\n" + "\n".join(df["Indicator Name"].dropna().unique()))
         # Filtering via indicator
-        df = df[df["Indicator Name"] == "PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of population)"]
+        df = df[df["Indicator Name"] == "PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total)"]
 
         # Reshaping the data
         df_melted = df.melt(
