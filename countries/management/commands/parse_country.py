@@ -15,6 +15,7 @@ class Command(BaseCommand):
         df.dropna(axis=1, how='all', inplace=True)
         df.dropna(subset=["Country Name"], inplace=True)
 
+        self.stdout.write("Available Indicator Names:\n" + "\n".join(df["Indicator Name"].dropna().unique()))
         # Filtering via indicator
         df = df[df["Indicator Name"] == "PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of population)"]
 
