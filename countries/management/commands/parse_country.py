@@ -22,8 +22,7 @@ class Command(BaseCommand):
         )
         df_melted["Year"] = pd.to_numeric(df_melted["Year"], errors="coerce")
         df_melted.dropna(subset=["Year"], inplace=True)
-        df_melted["Year"] = df_melted["Year"].astype(int)
-        #this is where it gets loaded into the database
+        df_melted["Year"] = df_melted["Year"].astype(int) + 1
         for _, row in df_melted.iterrows():
             country, _ = Country.objects.get_or_create(
                 code=row["Country Code"],
