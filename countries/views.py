@@ -94,13 +94,13 @@ def check_metadata(request):
 
 def load_metadata(request):
     data = [
-        {"country_name": "Kenya", "income_level": "Low"},
-        {"country_name": "Canada", "income_level": "High"},
-        {"country_name": "India", "income_level": "Lower-Middle"},
+        {"code": "KEN", "income_level": "Low"},
+        {"code": "CAN", "income_level": "High"},
+        {"code": "IND", "income_level": "Lower-Middle"},
     ]
     for item in data:
         CountryMetadata.objects.update_or_create(
-            country_name=item["country_name"],
+            code=item["code"],
             defaults={"income_level": item["income_level"]}
         )
     return JsonResponse({"status": "Metadata loaded"})
