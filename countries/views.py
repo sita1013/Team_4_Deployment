@@ -86,29 +86,19 @@ def barchart_compare(request):
 
 
 from django.http import JsonResponse
-from .models import CountryMetadata  # or IncomeLevelMetadata, whichever is correct
+from .models import CountryMetadata
 
 def check_metadata(request):
-    data = list(CountryMetadata.objects.values())  # change model name if needed
+    data = list(CountryMetadata.objects.values())
     return JsonResponse(data, safe=False)
 
-from django.http import JsonResponse
-import pandas as pd
-from .models import CountryMetadata  # or IncomeLevelMetadata — whichever is correct
-
 def load_metadata(request):
-    if CountryMetadata.objects.exists():
-        return JsonResponse({'status': 'Metadata already loaded'})
-
-    # You can use a CSV or just hardcode for now:
     data = [
         {"country_name": "Kenya", "income_level": "Low"},
         {"country_name": "Canada", "income_level": "High"},
         {"country_name": "India", "income_level": "Lower-Middle"},
     ]
-
     for item in data:
         CountryMetadata.objects.create(**item)
-
-    return JsonResponse({'status': 'Metadata loaded'})
+    return JsonResponse({"status": "Metadata loaded"})
 
