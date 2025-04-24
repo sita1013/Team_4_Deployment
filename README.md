@@ -62,5 +62,5 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python3 manage.py parse_country countries/country_data/pm25_data.xlsx.xlsx
-python3 manage.py runserver 0.0.0.0:8000
-* then visit <https://aliasoctavia-bingochamber-8000.codio-box.uk/>
+python3 manage.py runserver 
+
