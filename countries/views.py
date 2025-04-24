@@ -85,3 +85,11 @@ def barchart_compare(request):
     })
 
 
+from django.http import JsonResponse
+from .models import CountryMetadata  # or IncomeLevelMetadata, whichever is correct
+
+def check_metadata(request):
+    data = list(CountryMetadata.objects.values())  # change model name if needed
+    return JsonResponse(data, safe=False)
+
+

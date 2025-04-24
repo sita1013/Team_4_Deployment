@@ -31,9 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '*',
-    'crystalenjoy-beatlesmary-8000.codio-box.uk/'
-    'cadetsamuel-hermandiesel-8000.codio-box.uk/'
+    'team-4-deployment.onrender.com',
 ]
 
 # Application definition
