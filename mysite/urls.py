@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from countries.views import check_metadata 
+from countries.views import check_metadata, load_metadata
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('countries.urls')),
     path('check-metadata/', check_metadata),
+    path('load-metadata/', load_metadata),
 ]
