@@ -1,5 +1,5 @@
-import pandas as pd
 from django.core.management.base import BaseCommand
+import pandas as pd
 from countries.models import Country, PM25Record, CountryMetadata
 
 class Command(BaseCommand):
@@ -42,13 +42,15 @@ class Command(BaseCommand):
 
         # === Load Metadata Sheet ===
         self.stdout.write("Loading country metadata...")
-        meta_df = pd.read_excel(filepath, sheet_name='Metadata', engine='openpyxl')
-        meta_df.dropna(subset=["Country Code", "Income Level"], inplace=True)
+        xls = pd.ExcelFile(filepath, engine='openpyxl')
+        print("Available sheets:", xls.sheet_names)
+        meta_df = pd.read_excel(filepath, sheet_name='Metadata - Countries', engine='openpyxl')
+        meta_df.dropna(subset=["Country Code", "IncomeGroup"], inplace=True)
 
         for _, row in meta_df.iterrows():
             CountryMetadata.objects.update_or_create(
                 code=row["Country Code"],
-                defaults={"income_level": row["Income Level"]}
+                defaults={"income_level": row["IncomeGroup"]}
             )
 
         self.stdout.write(self.style.SUCCESS("Country metadata loaded successfully."))
