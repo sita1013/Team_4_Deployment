@@ -39,6 +39,7 @@ Core Python files:
 Backend: Django 4.x
 Frontend: HTML, Django Templates, Chart.js
 Database: SQLite (development), PostgreSQL (intended for production)
+Cloud URL: https://team-4-deployment-1.onrender.com/
 
 ## Notes
 We initially planned to use PostgreSQL for deployment and API-driven frontend interactions.
