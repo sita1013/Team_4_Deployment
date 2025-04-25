@@ -1,64 +1,56 @@
-import os
-import re
-from pathlib import Path
+import pandas as pd
 from django.core.management.base import BaseCommand
-from countries.models import CountryData
+from countries.models import Country, PM25Record, CountryMetadata
 
 class Command(BaseCommand):
-    """There was an issue with displaying the names as North America rather than north America. UK was also showing up as Uk. 
-    All the below code is to make sure it displays correctly on the page. Maybe overkill but it was a lot of work just to get it to display
-    correctly. """
-    help = 'Load all country data files into the database'
-
+    help = "Load PM2.5 data and metadata from Excel file into the database"
+    def add_arguments(self, parser):
+        parser.add_argument('filepath', type=str, help='Path to the Excel file')
     def handle(self, *args, **kwargs):
-        print("Deleting all existing CountryData entries...")
-        CountryData.objects.all().delete()
+        filepath = kwargs['filepath']
+        self.stdout.write(f"Reading file: {filepath}")
 
-        base_dir = Path(__file__).resolve().parent.parent.parent.parent
-        data_dir = os.path.join(base_dir, 'countries/countries_data')
+    #Loading the PM2.5 data
+        df = pd.read_excel(filepath, sheet_name='Data', skiprows=3, engine='openpyxl')
+        df.dropna(axis=1, how='all', inplace=True)
+        df.dropna(subset=["Country Name"], inplace=True)
 
-        display_names = {
-            "uk": "UK",
-            "northamerica": "North America",
-            "southafrica": "South Africa",
-            "southamerica": "South America",
-            "newzealand": "New Zealand"
-        }
+        self.stdout.write("Available Indicator Names:\n" + "\n".join(df["Indicator Name"].dropna().unique()))
+        # Filtering via indicator
+        df = df[df["Indicator Name"] == "PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total)"]
 
-        print("Deleting all existing CountryData entries...")
-        CountryData.objects.all().delete()
-        print("Database with incorrect names cleared.")
+    # Reshaping the data
+        df_melted = df.melt(
+            id_vars=["Country Name", "Country Code", "Indicator Name", "Indicator Code"],
+            var_name="Year",
+            value_name="PM25_Level"
+        )
+        df_melted["Year"] = pd.to_numeric(df_melted["Year"], errors="coerce")
+        df_melted.dropna(subset=["Year", "PM25_Level"], inplace=True)
+        df_melted["Year"] = df_melted["Year"].astype(int)
+        self.stdout.write(f"PM2.5 records to import: {len(df_melted)}")
+        for _, row in df_melted.iterrows():
+            country, _ = Country.objects.get_or_create(
+                code=row["Country Code"],
+                defaults={"name": row["Country Name"]}
+            )
+            PM25Record.objects.update_or_create(
+                country=country,
+                year=row["Year"],
+                defaults={"value": row["PM25_Level"]}
+            )
+        self.stdout.write(self.style.SUCCESS("PM2.5 data loaded successfully."))
 
-        for filename in os.listdir(data_dir):
-            if filename.endswith('.txt'):
-                name_raw = filename.replace('.txt', '').replace('_', '').replace('-', '').lower()
-                country_name = display_names.get(name_raw, name_raw.title())  # Use clean name if mapped
+    # Load metadata -- finger's crossed
+        self.stdout.write("Loading country metadata.")
+        xls = pd.ExcelFile(filepath, engine='openpyxl')
+        self.stdout.write(f"Available sheets: {xls.sheet_names}")
+        meta_df = xls.parse(sheet_name='Metadata - Countries')
+        meta_df.dropna(subset=["Country Code", "IncomeGroup"], inplace=True)
 
-                print(f"Loading data for {country_name} (raw: {name_raw})")
-
-                file_path = os.path.join(data_dir, filename)
-                with open(file_path, 'r') as file:
-                    for line in file:
-                        line = line.strip()
-                        if not line:
-                            continue
-
-                        parts = line.split(',')
-                        if len(parts) < 3:
-                            print(f"Issues with line. Skipping bad line: {line}")
-                            continue
-
-                        try:
-                            year = int(parts[0].split(':')[1].strip())
-                            population = float(parts[1].split(':')[1].strip().replace(',', ''))
-                            pollution = float(parts[2].split(':')[1].strip().replace(',', ''))
-
-                            CountryData.objects.create(
-                                year=year,
-                                country=country_name,
-                                population_mil=population,
-                                pollution_affected_mil=pollution
-                            )
-                            print(f"Year {year} added for {country_name}")
-                        except (IndexError, ValueError) as e:
-                            print(f"Issues with line. Skipping bad line: {line} — {e}")
+        for _, row in meta_df.iterrows():
+            CountryMetadata.objects.update_or_create(
+                code=row["Country Code"],
+                defaults={"income_level": row["IncomeGroup"]}
+            )
+        self.stdout.write(self.style.SUCCESS("Country metadata loaded successfully."))
